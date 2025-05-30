@@ -2,18 +2,19 @@
 #define BLYNK_TEMPLATE_NAME "smartfarm"
 #define BLYNK_AUTH_TOKEN "4RhGWUxAftbz3WeFFJ-R6niQcwHYL7NM"
 
-#include <ESP8266WiFi.h>
-#include <BlynkSimpleEsp8266.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <BlynkSimpleEsp32.h>
 
 char ssid[] = "naganaga";
-char pass[] = "buahnaga";
+char pass[] = "buahlah";
 
-#define LDR_PIN A0          // ADC ESP8266 hanya di A0
-#define LED_PIN 13          // Sesuaikan dengan pin ESP8266
-#define BUZZER_PIN 12       // Sesuaikan dengan pin ESP8266
+#define LDR_PIN 36         // Sensor cahaya (ADC1)
+#define LED_PIN 13         // Simulasi lampu pertanian
+#define BUZZER_PIN 12      // Buzzer alarm
 
 int ldrValue = 0;
-bool ledManualState = true;  // Status default: lampu ON
+bool ledManualState = true; 
 
 BlynkTimer timer;
 
@@ -24,24 +25,20 @@ BLYNK_WRITE(V0) {
 
 void checkLampAndLDR() {
   ldrValue = analogRead(LDR_PIN);
-  Blynk.virtualWrite(V1, ldrValue);
-
+  Blynk.virtualWrite(V1, ldrValue); 
   bool ledStatus = digitalRead(LED_PIN);
 
-  if (ldrValue < 250) {
+  if (ldrValue < 250) { 
     if (ledStatus == LOW) {
-      tone(BUZZER_PIN, 1000);
-      Blynk.virtualWrite(V2, "Lampu Mati!");
-      Blynk.virtualWrite(V3, 255);
+      tone(BUZZER_PIN, 1000); 
+      Blynk.virtualWrite(V2, 255); 
     } else {
       noTone(BUZZER_PIN);
-      Blynk.virtualWrite(V2, "Lampu Nyala");
-      Blynk.virtualWrite(V3, 0);
+      Blynk.virtualWrite(V2,0);
     }
   } else {
     noTone(BUZZER_PIN);
-    Blynk.virtualWrite(V2, "Terang - Aman");
-    Blynk.virtualWrite(V3, 0);
+    Blynk.virtualWrite(V2, 0);
   }
 }
 
@@ -56,7 +53,7 @@ void setup() {
   digitalWrite(BUZZER_PIN, LOW);
 
   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
-  timer.setInterval(1000L, checkLampAndLDR);
+  timer.setInterval(1000L, checkLampAndLDR); 
 }
 
 void loop() {
